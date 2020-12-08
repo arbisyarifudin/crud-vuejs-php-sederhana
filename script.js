@@ -10,6 +10,7 @@ var vue = new Vue({
 			teks: null,
 			tipe: null,
 		},
+		modal: '',
 		form: {
 			nama: null,
 			harga: null,
@@ -25,6 +26,9 @@ var vue = new Vue({
 		this.ambil_produk();
 	},
 	methods: {
+		changeModal(value) {
+			this.modal = value;
+		},
 		ambil_produk() {
 
 			// nyalakan loading
@@ -53,7 +57,24 @@ var vue = new Vue({
 				})
 		},
 		handleUpload() {
-			this.form.file = this.$refs.file.files[0];
+			if (this.modal == 'modal-tambah') {
+				this.form.file = this.$refs.file_tambah.files[0];
+			} else if (this.modal == 'modal-ubah') {
+				this.form.file = this.$refs.file_ubah.files[0];
+
+			}
+		},
+		isi_form(produk) {
+
+			console.log(produk)
+
+			this.form.id = produk.id;
+			this.form.nama = produk.nama;
+			this.form.harga = produk.harga;
+			this.form.berat = produk.berat;
+			this.form.gambar = produk.gambar;
+			this.form.deskripsi = produk.deskripsi;
+
 		},
 		tambah_produk() {
 
@@ -62,18 +83,6 @@ var vue = new Vue({
 
 			// siapkan data tambah dari obj formData
 			let dataTambah = new FormData();
-
-			// // siapkan data tambah
-			// let data_tambah = {
-			// 	aksi: 'tambah_produk',
-			// 	data: {
-			// 		nama: this.form.nama,
-			// 		harga: this.form.harga,
-			// 		berat: this.form.berat,
-			// 		deskripsi: this.form.deskripsi,
-			// 	},
-			// 	file: this.form.file
-			// }
 
 			dataTambah.append('aksi', 'tambah_produk');
 			dataTambah.append('nama', this.form.nama);
@@ -118,34 +127,10 @@ var vue = new Vue({
 					console.log(error)
 				})
 		},
-		isi_form(produk) {
-
-			console.log(produk)
-
-			this.form.id = produk.id;
-			this.form.nama = produk.nama;
-			this.form.harga = produk.harga;
-			this.form.berat = produk.berat;
-			this.form.gambar = produk.gambar;
-			this.form.deskripsi = produk.deskripsi;
-
-		},
 		ubah_produk() {
 
 			// disable semua tombol submit
 			$("button[type=submit]").prop('disabled', true);
-
-			// siapkan data
-			// let data = {
-			// 	aksi: 'ubah_produk',
-			// 	id_produk: this.form.id,
-			// 	data: {
-			// 		nama: this.form.nama,
-			// 		harga: this.form.harga,
-			// 		berat: this.form.berat,
-			// 		deskripsi: this.form.deskripsi,
-			// 	}
-			// }
 
 			// siapkan data ubah dari obj formData
 			let dataUbah = new FormData();
@@ -201,12 +186,6 @@ var vue = new Vue({
 			// jika iyaa
 			if (konfirmasi) {
 
-				// siapkan data
-				// let data = {
-				// 	aksi: 'hapus_produk',
-				// 	id_produk: id_produk,
-				// }
-
 				// siapkan data hapus dari obj formData
 				let dataHapus = new FormData();
 
@@ -252,4 +231,13 @@ var vue = new Vue({
 			});
 		}
 	},
+	filters: {
+		formatNomor(value) {
+			if (value == null) {
+				return 0;
+			} else {
+				return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");;
+			}
+		}
+	}
 })
