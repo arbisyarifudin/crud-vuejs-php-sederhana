@@ -32,47 +32,49 @@
 			</div>
 
 			<!-- data tabel produk -->
-			<table class="table table-bordered">
-				<thead>
-					<tr>
-						<th>#</th>
-						<th style="width: 100px;">Foto</th>
-						<th>Nama Produk</th>
-						<th>Harga</th>
-						<th>Berat</th>
-						<th>Aksi</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="(p, index) in produk">
-						<td>{{index+1}}</td>
-						<td>
-							<img :src="`gambar/${p.gambar}`" class="img-fluid" width="100" alt="foto">
-						</td>
-						<td>{{p.nama}}</td>
-						<td>{{p.harga}}</td>
-						<td>{{p.berat}}</td>
-						<td>
-							<!-- pada saat tombol hapus ini di klik jalankan fungsi hapus_produk dengan melemparkan id produk nya -->
-							<button type="button" class="btn btn-danger btn-sm" @click="hapus_produk(p.id)">Hapus</button>
-							<!-- pada saat tombol ubah ini di klik, buka modal ubah, lalu jalankan fungsi isi_form dengen melemparkan objek p (produk) untuk mengisi data form di vue js menjadi data produk yang di klik -->
-							<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-ubah" @click="isi_form(p)">Ubah</button>
-							<!-- modal detail produk -->
-							<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modal-detail" @click="isi_form(p)">Detail</button>
-						</td>
-					</tr>
-					<!-- jika data produk kosong, isi table dengan pesan -->
-					<tr v-if="produk.length == 0">
-						<td colspan="5" class="text-center">Data produk kosong masih kosong.</td>
-					</tr>
-					<!-- jika loading == true, tampilkan pesan memuat -->
-					<tr v-if="loading==true">
-						<td colspan="5" class="text-center text-info">Memuat data...</td>
-					</tr>
-				</tbody>
-			</table>
+			<div class="table-responsive">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th style="width: 100px;">Foto</th>
+							<th>Nama Produk</th>
+							<th>Harga</th>
+							<th>Berat</th>
+							<th style="width: 210px;">Aksi</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(p, index) in produk">
+							<td>{{index+1}}</td>
+							<td>
+								<img :src="`gambar/${p.gambar}`" class="img-fluid" width="100" alt="foto">
+							</td>
+							<td>{{p.nama}}</td>
+							<td>Rp. <span class="float-right">{{p.harga | formatNomor}}</span></td>
+							<td class="text-right">{{p.berat}} gram</td>
+							<td>
+								<!-- pada saat tombol hapus ini di klik jalankan fungsi hapus_produk dengan melemparkan id produk nya -->
+								<button type="button" class="btn btn-danger btn-sm" @click="hapus_produk(p.id)">Hapus</button>
+								<!-- pada saat tombol ubah ini di klik, buka modal ubah, lalu jalankan fungsi isi_form dengen melemparkan objek p (produk) untuk mengisi data form di vue js menjadi data produk yang di klik -->
+								<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-ubah" @click="isi_form(p); changeModal('modal-ubah')">Ubah</button>
+								<!-- modal detail produk -->
+								<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modal-detail" @click="isi_form(p)">Detail</button>
+							</td>
+						</tr>
+						<!-- jika data produk kosong, isi table dengan pesan -->
+						<tr v-if="produk.length == 0">
+							<td colspan="5" class="text-center">Data produk kosong masih kosong.</td>
+						</tr>
+						<!-- jika loading == true, tampilkan pesan memuat -->
+						<tr v-if="loading==true">
+							<td colspan="5" class="text-center text-info">Memuat data...</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 
-			<button type="button" data-toggle="modal" data-target="#modal-tambah" class="btn btn-primary" @click="resetForm">Tambah Data</button>
+			<button type="button" data-toggle="modal" data-target="#modal-tambah" class="btn btn-primary" @click="resetForm(); changeModal('modal-tambah')">Tambah Data</button>
 		</div>
 
 		<!-- MODAL TAMBAH PRODUK -->
@@ -106,7 +108,7 @@
 							<div class="form-group">
 								<label>Foto Produk</label>
 								<!-- saat input ini di ubah/change, jalankan funsgi handleUpload untuk menangani isi file nya -->
-								<input type="file" ref="file" @change="handleUpload" class="form-control" required>
+								<input type="file" ref="file_tambah" @change="handleUpload" class="form-control" required>
 							</div>
 						</div>
 						<div class="modal-footer">
@@ -151,7 +153,7 @@
 							</div>
 							<div class="form-group">
 								<label>Foto Produk</label>
-								<input type="file" ref="file" @change="handleUpload" class="form-control">
+								<input type="file" ref="file_ubah" @change="handleUpload" class="form-control">
 							</div>
 						</div>
 						<div class="modal-footer">
@@ -181,7 +183,7 @@
 							<div class="col-md-8">
 								<h6 class="h3">{{form.nama}}</h6>
 								<div class="content">
-									<h6 style="font-weight: normal;">Rp. {{form.harga}} - {{form.berat}} <i>gram</i></h6>
+									<h6 style="font-weight: normal;">Rp. {{form.harga | formatNomor}} - {{form.berat}} <i>gram</i></h6>
 									<hr>
 									{{form.deskripsi}}
 								</div>
